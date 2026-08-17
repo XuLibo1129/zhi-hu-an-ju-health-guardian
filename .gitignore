@@ -1,0 +1,56 @@
+# IDE, build and local environment files
+.git/
+.vscode/
+.idea/
+.devcontainer/
+build/
+**/build/
+managed_components/
+**/managed_components/
+sdkconfig
+sdkconfig.old
+**/sdkconfig
+**/sdkconfig.old
+local.properties
+**/local.properties
+node_modules/
+**/node_modules/
+.gradle/
+**/.gradle/
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local datasets, trained weights, generated results and logs
+tools/csi-toolkit/data/
+tools/csi-toolkit/models/
+tools/csi-toolkit/output/
+tools/csi-toolkit/results/
+services/voice-relay/
+**/logs/
+*.log
+*.joblib
+*.onnx
+*.kmodel
+*.tflite
+
+# Private credentials and generated packages
+.env
+**/.env
+*.apk
+*.aab
+*.ipa
+clients/wechat-miniapp/project.private.config.json
+
+# On-site demonstration-only assets and scripts
+clients/web-dashboard/assets/ds-fusion.js
+clients/web-dashboard/ds-fusion-preview.png
+tools/csi-toolkit/mock_main_terminal_server.py
+
+# Generated audio and captures
+*.wav
+*.pcm
+*.raw
+*.pcap
