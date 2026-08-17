@@ -1,0 +1,327 @@
+menu "Dual Agent Console"
+
+    config APP_WIFI_ENABLE
+        bool "Enable Wi-Fi station for cloud agent"
+        default y
+
+    config APP_WIFI_SSID
+        string "Wi-Fi SSID"
+        depends on APP_WIFI_ENABLE
+        default ""
+
+    config APP_WIFI_PASSWORD
+        string "Wi-Fi password"
+        depends on APP_WIFI_ENABLE
+        default ""
+
+    config APP_CSI_HTTP_ENABLE
+        bool "Enable WiFi CSI HTTP result receiver"
+        depends on APP_WIFI_ENABLE
+        default y
+        help
+            Receive local PC WiFi CSI fall-detection results by HTTP POST.
+            Endpoint: /api/sensor/csi
+
+    config APP_CSI_HTTP_PORT
+        int "WiFi CSI HTTP receiver port"
+        depends on APP_CSI_HTTP_ENABLE
+        default 8090
+        range 1024 65534
+
+    config APP_CSI_HTTP_MAX_BODY
+        int "WiFi CSI HTTP max JSON body bytes"
+        depends on APP_CSI_HTTP_ENABLE
+        default 1024
+        range 256 4096
+
+    config APP_CLOUD_LLM_ENABLE
+        bool "Enable cloud LLM HTTP client"
+        default y
+
+    config APP_CLOUD_LLM_URL
+        string "OpenAI-compatible chat completions URL"
+        depends on APP_CLOUD_LLM_ENABLE
+        default ""
+        help
+            Example: https://api.example.com/v1/chat/completions
+
+    config APP_CLOUD_LLM_API_KEY
+        string "Cloud LLM API key"
+        depends on APP_CLOUD_LLM_ENABLE
+        default ""
+
+    config APP_CLOUD_LLM_MODEL
+        string "Cloud LLM model name"
+        depends on APP_CLOUD_LLM_ENABLE
+        default ""
+
+    config APP_CLOUD_LLM_TIMEOUT_MS
+        int "Cloud LLM request timeout ms"
+        depends on APP_CLOUD_LLM_ENABLE
+        default 15000
+        range 3000 60000
+
+    config APP_AUDIO_SAMPLE_RATE
+        int "Microphone PCM sample rate"
+        default 16000
+        range 8000 48000
+
+    config APP_AUDIO_RECORD_MAX_MS
+        int "Maximum hold-to-talk record duration ms"
+        default 6000
+        range 1000 15000
+
+    config APP_CLOUD_ASR_ENABLE
+        bool "Enable cloud ASR speech-to-text"
+        default n
+
+    config APP_CLOUD_ASR_URL
+        string "OpenAI-compatible ASR transcription URL"
+        depends on APP_CLOUD_ASR_ENABLE
+        default ""
+        help
+            Example: https://api.example.com/v1/audio/transcriptions
+
+    config APP_CLOUD_ASR_API_KEY
+        string "Cloud ASR API key"
+        depends on APP_CLOUD_ASR_ENABLE
+        default ""
+
+    config APP_CLOUD_ASR_MODEL
+        string "Cloud ASR model name"
+        depends on APP_CLOUD_ASR_ENABLE
+        default "whisper-1"
+
+    config APP_CLOUD_ASR_LANGUAGE
+        string "Cloud ASR language hint"
+        depends on APP_CLOUD_ASR_ENABLE
+        default "zh"
+
+    config APP_CLOUD_ASR_TIMEOUT_MS
+        int "Cloud ASR request timeout ms"
+        depends on APP_CLOUD_ASR_ENABLE
+        default 30000
+        range 5000 90000
+
+    config APP_CLOUD_TTS_ENABLE
+        bool "Enable cloud TTS text-to-speech"
+        default n
+
+    config APP_CLOUD_TTS_URL
+        string "OpenAI-compatible TTS speech URL"
+        depends on APP_CLOUD_TTS_ENABLE
+        default ""
+        help
+            Example: https://api.example.com/v1/audio/speech
+
+    config APP_CLOUD_TTS_API_KEY
+        string "Cloud TTS API key"
+        depends on APP_CLOUD_TTS_ENABLE
+        default ""
+
+    config APP_CLOUD_TTS_MODEL
+        string "Cloud TTS model name"
+        depends on APP_CLOUD_TTS_ENABLE
+        default "tts-1"
+
+    config APP_CLOUD_TTS_VOICE
+        string "Cloud TTS voice name"
+        depends on APP_CLOUD_TTS_ENABLE
+        default "alloy"
+
+    config APP_CLOUD_TTS_SAMPLE_RATE
+        int "Cloud TTS PCM sample rate"
+        depends on APP_CLOUD_TTS_ENABLE
+        default 16000
+        range 8000 48000
+
+    config APP_CLOUD_TTS_MAX_BYTES
+        int "Cloud TTS maximum PCM response bytes"
+        depends on APP_CLOUD_TTS_ENABLE
+        default 262144
+        range 32768 2097152
+
+    config APP_CLOUD_TTS_TIMEOUT_MS
+        int "Cloud TTS request timeout ms"
+        depends on APP_CLOUD_TTS_ENABLE
+        default 30000
+        range 5000 90000
+
+    config APP_RADAR_ENABLE
+        bool "Enable HLK LD6002/LD6002C UART radar"
+        default y
+
+    config APP_RADAR_UART_NUM
+        int "Radar UART number"
+        depends on APP_RADAR_ENABLE
+        default 1
+        range 0 2
+
+    config APP_RADAR_UART_TX_GPIO
+        int "Radar UART TX GPIO"
+        depends on APP_RADAR_ENABLE
+        default 23
+
+    config APP_RADAR_UART_RX_GPIO
+        int "Radar UART RX GPIO"
+        depends on APP_RADAR_ENABLE
+        default 22
+
+    config APP_RADAR_UART_BAUD
+        int "Radar UART baud rate"
+        depends on APP_RADAR_ENABLE
+        default 115200
+
+    config APP_RADAR_QUERY_ENABLE
+        bool "Periodically query radar firmware/status"
+        depends on APP_RADAR_ENABLE
+        default y
+
+    config APP_K230_VISION_ENABLE
+        bool "Enable K230 fall-detection result receiver"
+        default y
+        help
+            Receive one-way fall-detection status lines from K230 over UART.
+            Expected lines are K230,FALL and K230,NOFALL.
+
+    config APP_K230_VISION_UART_NUM
+        int "K230 vision UART number"
+        depends on APP_K230_VISION_ENABLE
+        default 3
+        range 0 5
+        help
+            ESP32-P4 UART used only for receiving K230 vision status.
+
+    config APP_K230_VISION_UART_RX_GPIO
+        int "K230 vision UART RX GPIO"
+        depends on APP_K230_VISION_ENABLE
+        default 20
+        range 0 54
+        help
+            Connect K230 IO32 TX to this ESP32-P4 RX pin.
+
+    config APP_K230_VISION_UART_BAUD
+        int "K230 vision UART baud rate"
+        depends on APP_K230_VISION_ENABLE
+        default 115200
+
+    config APP_SIM800_ENABLE
+        bool "Enable A7670C LTE phone/SMS module"
+        default n
+        help
+            Compatibility symbol retained from the previous SIM800C driver.
+            Enable the A7670C UART driver for one-click emergency call/SMS
+            and optional automatic alerts over LTE.
+
+    config APP_SIM800_UART_NUM
+        int "A7670C UART number"
+        depends on APP_SIM800_ENABLE
+        default 2
+        range 0 2
+
+    config APP_SIM800_UART_TX_GPIO
+        int "A7670C UART TX GPIO"
+        depends on APP_SIM800_ENABLE
+        default 48
+        help
+            ESP32-P4 TX pin. Connect this pin to A7670C RXD.
+
+    config APP_SIM800_UART_RX_GPIO
+        int "A7670C UART RX GPIO"
+        depends on APP_SIM800_ENABLE
+        default 47
+        help
+            ESP32-P4 RX pin. Connect this pin to A7670C TXD.
+
+    config APP_SIM800_UART_BAUD
+        int "A7670C UART baud rate"
+        depends on APP_SIM800_ENABLE
+        default 115200
+
+    config APP_SIM800_PWRKEY_GPIO
+        int "A7670C PWRKEY control GPIO"
+        depends on APP_SIM800_ENABLE
+        default -1
+        range -1 54
+        help
+            Use -1 when PWR is handled by the module button or auto-start.
+            If connecting PWR to ESP32-P4, use a transistor/level-safe circuit.
+
+    config APP_SIM800_EMERGENCY_PHONE
+        string "Emergency phone number"
+        depends on APP_SIM800_ENABLE
+        default ""
+        help
+            Phone number used by one-click call/SMS and automatic alerts.
+
+    config APP_SIM800_EMERGENCY_SMS_TEXT
+        string "Default emergency SMS text"
+        depends on APP_SIM800_ENABLE
+        default "Emergency alert from health terminal."
+
+    config APP_SIM800_AUTO_SMS_ENABLE
+        bool "Automatically send SMS on emergency event"
+        depends on APP_SIM800_ENABLE
+        default n
+
+    config APP_SIM800_AUTO_CALL_ENABLE
+        bool "Automatically place call on emergency event"
+        depends on APP_SIM800_ENABLE
+        default n
+
+    config APP_SIM800_AUTO_COOLDOWN_SECONDS
+        int "Automatic emergency alert cooldown seconds"
+        depends on APP_SIM800_ENABLE
+        default 300
+        range 30 3600
+
+    config APP_HISTORY_SAMPLE_SECONDS
+        int "Vitals history sample interval seconds"
+        default 60
+        range 5 600
+        help
+            Sample valid heart-rate and respiration-rate readings into SD-card
+            daily averages. The UI keeps the latest five daily averages.
+
+    config APP_WEATHER_ENABLE
+        bool "Enable real local weather display"
+        default y
+
+    config APP_WEATHER_AUTO_LOCATION
+        bool "Use IP geolocation for weather"
+        depends on APP_WEATHER_ENABLE
+        default n
+        help
+            Use the current public IP address to estimate city and coordinates.
+            If this is disabled or lookup fails, the fixed location below is used.
+
+    config APP_WEATHER_FIXED_LATITUDE
+        string "Fixed weather latitude"
+        depends on APP_WEATHER_ENABLE
+        default "32.0805"
+
+    config APP_WEATHER_FIXED_LONGITUDE
+        string "Fixed weather longitude"
+        depends on APP_WEATHER_ENABLE
+        default "118.6729"
+
+    config APP_WEATHER_FIXED_CITY
+        string "Fixed weather city label"
+        depends on APP_WEATHER_ENABLE
+        default "Nanjing Jiangbei New Area"
+
+    config APP_WEATHER_CHINA_STATION_ID
+        string "China Weather station ID"
+        depends on APP_WEATHER_ENABLE
+        default "101190107"
+        help
+            China Weather station 101190107 is Pukou District, Nanjing,
+            used for the fixed Nanjing Jiangbei New Area location.
+
+    config APP_WEATHER_UPDATE_MINUTES
+        int "Weather refresh interval minutes"
+        depends on APP_WEATHER_ENABLE
+        default 30
+        range 5 180
+
+endmenu

@@ -1,0 +1,28 @@
+menu "WiFi CSI TX"
+
+    config CSI_WIFI_SSID
+        string "Receiver SoftAP SSID"
+        default "CSI_RX_AP"
+
+    config CSI_WIFI_PASSWORD
+        string "Receiver SoftAP password"
+        default ""
+
+    config CSI_RX_IP
+        string "Receiver UDP IP"
+        default "192.168.4.1"
+
+    config CSI_UDP_PORT
+        int "Receiver UDP port"
+        default 3333
+
+    config CSI_TX_INTERVAL_MS
+        int "UDP packet interval in ms"
+        default 20
+
+    config CSI_TX_PAYLOAD_LEN
+        int "UDP payload bytes"
+        range 16 1400
+        default 128
+
+endmenu

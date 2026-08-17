@@ -1,0 +1,17 @@
+{
+  "name": "miniprogram-ts-less-quickstart",
+  "version": "1.0.0",
+  "description": "ESP-Claw 健康守护终端微信小程序",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^2.8.3-1",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,160 @@
+<navigation-bar title="健康守护终端" back="{{false}}" color="#14232B" background="#F1F4F5"></navigation-bar>
+
+<scroll-view class="page" scroll-y type="list">
+  <view class="shell">
+    <view class="summary">
+      <view class="summary-main">
+        <text class="eyebrow">ESP-Claw Agent</text>
+        <view class="title-row">
+          <text class="title">无感健康守护</text>
+          <text class="status-dot {{connected ? 'status-online' : 'status-offline'}}"></text>
+        </view>
+        <text class="subline">{{networkText}} - {{lastUpdate}}</text>
+      </view>
+      <view class="summary-side">
+        <text class="summary-time">{{currentTime}}</text>
+        <text class="summary-date">{{currentDate}}</text>
+        <button class="icon-button" bindtap="refreshStatus" aria-label="刷新">↻</button>
+      </view>
+    </view>
+
+    <view wx:if="{{errorText}}" class="notice danger">
+      <text>{{errorText}}</text>
+    </view>
+
+    <view class="config-line">
+    <input class="host-input" value="{{baseUrl}}" bindinput="onBaseUrlInput" confirm-type="done" placeholder="主控地址，例如 http://192.168.1.100:8090" />
+      <button class="save-button" bindtap="saveBaseUrl">连接</button>
+    </view>
+
+    <view class="overview-strip">
+      <view class="overview-item overview-primary">
+        <text class="live-mark"></text>
+        <view><text>监护状态</text><text class="overview-value {{fusionTone === 'danger' ? 'danger-text' : ''}}">{{monitorText}}</text></view>
+      </view>
+      <view class="overview-item"><text>在线节点</text><text class="overview-value">{{nodeCountText}}</text></view>
+      <view class="overview-item"><text>生命体征</text><text class="overview-value">{{vitalQuality}}</text></view>
+      <view class="overview-item"><text>数据更新</text><text class="overview-value">{{updateText}}</text></view>
+    </view>
+
+    <view class="vitals-grid">
+      <view class="metric heart">
+        <text class="metric-label">当前心率</text>
+        <view class="metric-value-row">
+          <text class="metric-value">{{heart}}</text>
+          <text class="metric-unit">次/分</text>
+        </view>
+        <view class="mini-wave heart-wave">
+          <view wx:for="{{heartWave}}" wx:key="index" class="wave-bar" style="height: {{item}}rpx;"></view>
+        </view>
+        <text class="metric-note">{{humanText}}</text>
+      </view>
+      <view class="metric breath">
+        <text class="metric-label">当前呼吸</text>
+        <view class="metric-value-row">
+          <text class="metric-value">{{breath}}</text>
+          <text class="metric-unit">次/分</text>
+        </view>
+        <view class="mini-wave breath-wave">
+          <view wx:for="{{breathWave}}" wx:key="index" class="wave-bar" style="height: {{item}}rpx;"></view>
+        </view>
+        <text class="metric-note">{{radarText}}</text>
+      </view>
+    </view>
+
+    <view class="fusion {{fusionTone}}">
+      <view class="fusion-summary">
+        <view>
+          <text class="section-label">多模态融合判断</text>
+          <text class="fusion-title">{{fusionText}}</text>
+        </view>
+        <view class="score-pill">
+          <text>{{fusionScore}}</text>
+          <text class="score-small">/{{fusionThreshold}}</text>
+        </view>
+      </view>
+      <view class="fusion-sources">
+        <view wx:for="{{nodes}}" wx:key="key" class="source-chip {{item.tone}}">
+          <text class="source-dot"></text>
+          <view><text class="source-name">{{item.shortName}}</text><text>{{item.online ? item.fallText : item.statusText}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="analysis-panel">
+      <view class="analysis-head">
+        <view>
+          <text class="analysis-kicker">DEEPSEEK</text>
+          <text class="analysis-title">AI 健康分析</text>
+        </view>
+        <text class="analysis-status">{{analysisStatus}}</text>
+      </view>
+      <view class="analysis-data-row">
+        <view><text>当前心率</text><text class="analysis-data-value">{{heart}}</text></view>
+        <view><text>当前呼吸</text><text class="analysis-data-value">{{breath}}</text></view>
+        <view><text>风险评分</text><text class="analysis-data-value">{{fusionScore}}</text></view>
+      </view>
+      <input class="key-input" password value="{{deepseekKey}}" bindinput="onDeepSeekKeyInput" bindblur="saveDeepSeekKey" placeholder="DeepSeek API Key（sk-...）" />
+      <button class="analysis-button" bindtap="analyzeHealth" loading="{{analysisLoading}}" disabled="{{analysisLoading}}">{{analysisLoading ? '分析中' : '✦ 一键分析'}}</button>
+      <text class="analysis-reply">{{analysisResult}}</text>
+    </view>
+
+    <view class="history-panel">
+      <view class="section-head compact">
+        <text>历史趋势</text>
+        <text class="section-caption">最近五天平均 - {{historyStatus}}</text>
+      </view>
+      <view wx:if="{{historyDays.length}}" class="history-list">
+        <view wx:for="{{historyDays}}" wx:key="day" class="history-row">
+          <text class="history-day">{{item.day}}</text>
+          <view class="history-bars">
+            <view class="history-line">
+              <text class="history-label">心率</text>
+              <view class="history-track"><view class="history-fill heart-fill" style="width: {{item.heartWidth}}%;"></view></view>
+              <text class="history-value">{{item.heartText}}</text>
+            </view>
+            <view class="history-line">
+              <text class="history-label">呼吸</text>
+              <view class="history-track"><view class="history-fill breath-fill" style="width: {{item.breathWidth}}%;"></view></view>
+              <text class="history-value">{{item.breathText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="history-empty">暂无历史数据，SD卡采集后会显示</view>
+    </view>
+
+    <view class="section-head">
+      <text>节点状态</text>
+      <text class="section-caption">K230 / LD6002C / CSI</text>
+    </view>
+
+    <view class="node-list">
+      <view wx:for="{{nodes}}" wx:key="key" class="node-card {{item.tone}}">
+        <view class="node-top">
+          <view>
+            <text class="node-title">{{item.name}}</text>
+            <text class="node-subtitle">{{item.subtitle}}</text>
+          </view>
+          <text class="node-badge">{{item.statusText}}</text>
+        </view>
+        <view class="node-bottom">
+          <text>{{item.fallText}}</text>
+          <text>{{item.probabilityText}}</text>
+        </view>
+        <view class="bar">
+          <view class="bar-fill" style="width: {{item.barWidth}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="agent-panel">
+      <view class="section-head compact">
+        <text>询问设备 Agent</text>
+      </view>
+      <input class="query-input" value="{{queryText}}" bindinput="onQueryInput" placeholder="例如：现在节点情况怎么样" />
+      <button class="primary-button" bindtap="askAgent">询问 ESP-Claw</button>
+      <text class="reply">{{agentReply}}</text>
+    </view>
+  </view>
+</scroll-view>

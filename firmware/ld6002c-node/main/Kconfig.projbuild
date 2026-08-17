@@ -1,0 +1,62 @@
+menu "LD6002C Fall Node"
+
+    config APP_WIFI_SSID
+        string "Wi-Fi SSID"
+        default ""
+
+    config APP_WIFI_PASSWORD
+        string "Wi-Fi password"
+        default ""
+
+    config APP_MAIN_TERMINAL_URL
+        string "Main terminal HTTP URL"
+    default "http://192.168.1.100:8090/api/sensor/ld6002c"
+        help
+            Fill the ESP32-P4 main terminal IP shown on its screen.
+            Example: http://192.168.1.23:8090/api/sensor/ld6002c
+
+    config APP_NODE_ID
+        string "Node ID"
+        default "ld6002c_01"
+
+    config APP_LD6002C_UART_NUM
+        int "LD6002C UART number"
+        default 1
+        range 0 4
+
+    config APP_LD6002C_UART_TX_GPIO
+        int "ESP32-P4 UART TX GPIO to LD6002C RX0"
+        default 23
+        range -1 54
+
+    config APP_LD6002C_UART_RX_GPIO
+        int "ESP32-P4 UART RX GPIO from LD6002C TX0"
+        default 22
+        range 0 54
+
+    config APP_LD6002C_UART_BAUD
+        int "LD6002C UART baud"
+        default 115200
+
+    config APP_LD6002C_TX2_GPIO
+        int "Optional LD6002C TX2 fall output GPIO"
+        default -1
+        range -1 54
+        help
+            LD6002C TX2 is high on fall and low on no fall. Keep -1 when not connected.
+
+    config APP_REPORT_INTERVAL_MS
+        int "HTTP report interval ms"
+        default 2000
+        range 500 60000
+
+    config APP_HTTP_TIMEOUT_MS
+        int "HTTP timeout ms"
+        default 2000
+        range 500 10000
+
+    config APP_LD6002C_QUERY_FIRMWARE_ON_BOOT
+        bool "Send firmware query once on boot"
+        default y
+
+endmenu

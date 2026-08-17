@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>健康守护终端</title>
+    <link rel="stylesheet" href="./assets/styles.css?v=20260812a" />
+  </head>
+  <body class="desktop-mode">
+    <main class="app-shell">
+      <section class="hero-panel">
+        <div class="brand-block">
+          <p class="eyebrow">多模态健康守护</p>
+          <div class="title-line">
+            <h1>无感健康守护终端</h1>
+            <span id="connectionDot" class="status-dot offline"></span>
+          </div>
+          <p id="connectionText" class="subline">等待连接主控终端</p>
+        </div>
+        <div class="clock-block" aria-label="当前时间">
+          <strong id="currentTime">--:--</strong>
+          <span id="currentDate">----年--月--日</span>
+        </div>
+        <div class="toolbar">
+          <div class="mode-switch" aria-label="显示模式">
+            <button id="desktopModeBtn" class="active" type="button">电脑</button>
+            <button id="phoneModeBtn" type="button">手机</button>
+          </div>
+          <button id="refreshBtn" class="refresh-button" type="button" aria-label="刷新">
+            <span class="refresh-icon">↻</span>
+            <span>刷新</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="errorBox" class="notice hidden"></section>
+
+      <section class="config-row">
+        <label class="field">
+          <span>主控地址</span>
+          <input id="baseUrlInput" value="http://192.168.1.100:8090" spellcheck="false" />
+        </label>
+        <button id="connectBtn" class="dark-button" type="button">连接</button>
+      </section>
+
+      <section class="overview-strip" aria-label="监护概览">
+        <div class="overview-lead">
+          <span class="live-mark"></span>
+          <div><span>监护状态</span><strong id="safetyText">等待连接</strong></div>
+        </div>
+        <div class="overview-item"><span>在线节点</span><strong id="onlineNodeCount">0 / 3</strong></div>
+        <div class="overview-item"><span>生命体征</span><strong id="vitalQuality">暂无数据</strong></div>
+        <div class="overview-item"><span>数据更新</span><strong id="updateAge">--</strong></div>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="metric-card heart">
+          <div class="metric-head"><span class="metric-icon">♥</span><span class="card-label">当前心率</span></div>
+          <div class="metric-value"><strong id="heartValue">--</strong><span>次/分</span></div>
+          <svg class="metric-wave" viewBox="0 0 320 56" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="heartWave" points="0,34 320,34"></polyline>
+          </svg>
+          <p id="humanText">未检测到人体</p>
+        </article>
+
+        <article class="metric-card breath">
+          <div class="metric-head"><span class="metric-icon">≈</span><span class="card-label">当前呼吸</span></div>
+          <div class="metric-value"><strong id="breathValue">--</strong><span>次/分</span></div>
+          <svg class="metric-wave" viewBox="0 0 320 56" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="breathWave" points="0,34 320,34"></polyline>
+          </svg>
+          <p id="radarText">生命体征雷达未连接</p>
+        </article>
+
+        <article id="fusionCard" class="fusion-card">
+          <div class="fusion-main">
+            <div>
+              <span class="card-label">多模态融合结果</span>
+              <h2 id="fusionText">等待数据</h2>
+            </div>
+            <div class="score-pill"><span id="fusionScore">0</span><small>/ <span id="fusionThreshold">65</span></small></div>
+          </div>
+          <div id="fusionSources" class="fusion-sources"></div>
+        </article>
+      </section>
+
+      <section class="analysis-panel">
+        <div class="section-head compact">
+          <div>
+            <p class="analysis-kicker">DEEPSEEK</p>
+            <h2>AI 健康分析</h2>
+          </div>
+          <span id="analysisStatus">等待分析</span>
+        </div>
+        <div class="analysis-layout">
+          <div class="analysis-control">
+            <div class="analysis-data-row">
+              <span><small>当前心率</small><strong id="analysisHeart">--</strong></span>
+              <span><small>当前呼吸</small><strong id="analysisBreath">--</strong></span>
+              <span><small>风险评分</small><strong id="analysisRisk">0</strong></span>
+            </div>
+            <label class="field analysis-key-field">
+              <span>DeepSeek API Key</span>
+              <input id="deepseekKeyInput" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+            </label>
+            <button id="analyzeBtn" class="analysis-button" type="button"><span>✦</span>一键分析</button>
+          </div>
+          <div class="analysis-result">
+            <span class="result-label">健康建议</span>
+            <p id="analysisReply" class="analysis-reply">连接主控终端后，可根据当前数据生成健康建议。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="history-panel">
+        <div class="section-head compact">
+          <h2>历史趋势</h2>
+          <span id="historyStatus">最近五天平均</span>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <section class="content-grid nodes-only">
+        <section>
+          <div class="section-head">
+            <h2>节点状态</h2>
+            <span>K230 / LD6002C / CSI</span>
+          </div>
+          <div id="nodeList" class="node-list"></div>
+        </section>
+
+      </section>
+    </main>
+
+    <script src="./assets/app.js?v=20260812c"></script>
+  </body>
+</html>

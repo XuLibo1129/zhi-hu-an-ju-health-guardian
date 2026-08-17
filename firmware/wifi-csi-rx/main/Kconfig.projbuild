@@ -1,0 +1,155 @@
+menu "WiFi CSI RX"
+
+    config CSI_WIFI_SSID
+        string "SoftAP SSID"
+        default "CSI_RX_AP"
+
+    config CSI_WIFI_PASSWORD
+        string "SoftAP password"
+        default ""
+
+    config CSI_WIFI_CHANNEL
+        int "SoftAP fixed channel"
+        range 1 13
+        default 6
+
+    config CSI_AP_MAX_CONN
+        int "SoftAP max connections"
+        range 1 4
+        default 2
+
+    config CSI_STA_ENABLE
+        bool "Also connect A board to router as STA"
+        default n
+        help
+            Enable this for the final topology: A board keeps its SoftAP for
+            the B board, and also joins the router/phone hotspot so it can
+            send CSI features to a PC on the same LAN.
+
+    config CSI_STA_SSID
+        string "Router STA SSID"
+        default ""
+        depends on CSI_STA_ENABLE
+
+    config CSI_STA_PASSWORD
+        string "Router STA password"
+        default ""
+        depends on CSI_STA_ENABLE
+
+    config CSI_UDP_PORT
+        int "UDP port for TX board packets"
+        default 3333
+
+    config CSI_FORWARD_UDP
+        bool "Forward extracted CSI features over UDP"
+        default y
+        help
+            Send six feature values to the PC edge inference tool:
+            rssi,mean_amp2,amp2_8,amp2_24,amp2_48,amp2_80.
+
+    config CSI_FORWARD_IP
+        string "CSI feature UDP target IP"
+        default "192.168.1.100"
+        depends on CSI_FORWARD_UDP
+        help
+            This project forwards to the current PC on the router LAN.
+            Update this value when the PC LAN IP changes.
+
+    config CSI_FORWARD_PORT
+        int "CSI feature UDP target port"
+        default 34567
+        depends on CSI_FORWARD_UDP
+
+    config CSI_FORWARD_FIXED_RATE
+        bool "Forward CSI features at a fixed rate"
+        default y
+        depends on CSI_FORWARD_UDP
+        help
+            Send the latest accepted B-board CSI feature line at a stable
+            interval. This keeps the PC collection rate steady even when raw
+            CSI callbacks jitter on the Wi-Fi air interface.
+
+    config CSI_FORWARD_INTERVAL_MS
+        int "Fixed UDP forward interval in ms"
+        range 10 1000
+        default 20
+        depends on CSI_FORWARD_UDP && CSI_FORWARD_FIXED_RATE
+        help
+            20 ms is 50 Hz, matching the default TX packet interval.
+
+    config CSI_FORWARD_REQUIRE_FRESH
+        bool "Only forward fresh CSI feature lines"
+        default n
+        depends on CSI_FORWARD_UDP && CSI_FORWARD_FIXED_RATE
+        help
+            Keep this disabled for dataset collection so the PC receives a
+            stable sample clock. Enable it only when repeated samples must be
+            suppressed.
+
+    config CSI_FORWARD_DECIMATE
+        int "Forward/output every N CSI frames"
+        range 1 20
+        default 1
+        help
+            In fixed-rate mode this controls how often the latest feature
+            buffer is updated from accepted CSI frames. In direct mode it
+            controls how often UDP packets are sent.
+
+    config CSI_FILTER_MAC
+        string "CSI source MAC filter"
+        default "auto"
+        help
+            Use "auto" to learn the TX board MAC from the dominant CSI source
+            while UDP packets are arriving. Use an exact MAC such as
+            e0:72:a1:d2:42:68 to force one source. Use "off" or empty to
+            accept all CSI frames. Filtering is important when the PC also
+            joins the A-board SoftAP, otherwise PC traffic pollutes the CSI
+            features.
+
+    config CSI_QUEUE_SIZE
+        int "CSI print queue size"
+        range 8 256
+        default 64
+
+    config CSI_MAX_LEN
+        int "Maximum CSI bytes copied per frame"
+        range 128 512
+        default 384
+
+    config CSI_MIN_FEATURE_LEN
+        int "Minimum CSI bytes required for feature output"
+        range 0 384
+        default 162
+        help
+            Feature channel amp2_80 needs at least 162 CSI bytes. Short CSI
+            frames make the last channel become 0 and cause unstable datasets,
+            so the receiver drops them before VOFA/UDP feature output.
+
+    choice CSI_OUTPUT_FORMAT
+        prompt "CSI serial output format"
+        default CSI_OUTPUT_VOFA
+        help
+            Select CSV style CSI_DATA logs for dataset collection, or simple
+            comma-separated numeric channels for VOFA+ FireWater plotting.
+
+        config CSI_OUTPUT_CSI_DATA
+            bool "CSI_DATA CSV log"
+
+        config CSI_OUTPUT_VOFA
+            bool "VOFA+ FireWater numeric lines"
+    endchoice
+
+    config CSI_VOFA_DECIMATE
+        int "VOFA output every N CSI frames"
+        range 1 20
+        default 1
+        depends on CSI_OUTPUT_VOFA
+
+    config CSI_SERIAL_OUTPUT
+        bool "Print CSI data to USB serial"
+        default y
+        help
+            Keep this enabled for VOFA+ or serial debugging. Disable it when
+            the PC reads CSI features only through UDP.
+
+endmenu
